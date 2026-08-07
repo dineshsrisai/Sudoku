@@ -31,10 +31,10 @@ int main()
 				{
 					board[row][col] = val;
 				}
-				else
-				{
-					cout << "Invalid\n";
-				}
+			}
+			else
+			{
+				cout << "Invalid\n";
 			}
 		}
 
