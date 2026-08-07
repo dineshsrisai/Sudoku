@@ -31,7 +31,7 @@ int main()
 
 		if (s.substr(0, 3) == "set")
 		{
-			board[s[5] - '1'][s[4] - 'a'] = s[7] - '0';
+			board[s[4] - 'a'][s[5] - '1'] = s[7] - '0';
 		}
 
 		if (s == "exit")
