@@ -1,19 +1,11 @@
 #include <bits/stdc++.h>
+#include "./include/isValid.h"
+#include "./include/solve.h"
 using namespace std;
 
 int main()
 {
-	int board[9][9] = {
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0}};
-
+	vector<vector<int>> board(9, vector<int>(9, 0));
 	while (true)
 	{
 		for (int i = 0; i < 9; i++)
@@ -31,7 +23,16 @@ int main()
 
 		if (s.substr(0, 3) == "set")
 		{
-			board[s[4] - 'a'][s[5] - '1'] = s[7] - '0';
+			int row = s[4] - 'a', col = s[5] - '1';
+			int val = s[7] - '0';
+			if (isValid(board, row, col, val))
+			{
+				board[row][col] = val;
+			}
+			else
+			{
+				cout << "Invalid\n";
+			}
 		}
 
 		if (s == "exit")
