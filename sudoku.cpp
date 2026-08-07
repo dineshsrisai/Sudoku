@@ -25,13 +25,16 @@ int main()
 		{
 			int row = s[4] - 'a', col = s[5] - '1';
 			int val = s[7] - '0';
-			if (isValid(board, row, col, val))
+			if (row >= 0 && row < 9 && col >= 0 && col < 9)
 			{
-				board[row][col] = val;
-			}
-			else
-			{
-				cout << "Invalid\n";
+				if (isValid(board, row, col, val))
+				{
+					board[row][col] = val;
+				}
+				else
+				{
+					cout << "Invalid\n";
+				}
 			}
 		}
 

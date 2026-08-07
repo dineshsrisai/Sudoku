@@ -4,6 +4,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool isValid(vector<vector<int>>& b, int row, int col, int k);
+bool isValid(vector<vector<int>> &b, int row, int col, int k);
 
 #endif

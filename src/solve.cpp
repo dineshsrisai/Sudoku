@@ -9,7 +9,7 @@ bool solve(vector<vector<int>> &b)
         {
             if (b[i][j] == 0)
             {
-                for (int k = 0; k < 9; k++)
+                for (int k = 1; k <= 9; k++)
                 {
                     if (isValid(b, i, j, k))
                     {
