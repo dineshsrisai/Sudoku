@@ -9,6 +9,13 @@ int main()
 	vector<vector<int>> board(9, vector<int>(9, 0));
 	while (true)
 	{
+		// preprocessor directives eg : headerfiles
+#ifdef _WIN32
+		system("cls");
+#else
+		system("clear");
+#endif
+
 		printBoard(board);
 		cout << "\n"
 			 << "Enter a command : ";
@@ -39,3 +46,7 @@ int main()
 	}
 	return 0;
 }
+
+// cmake --build build
+// cmake -B build
+// .\build\sudoko.exe
