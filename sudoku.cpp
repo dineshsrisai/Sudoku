@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include "./include/isValid.h"
 #include "./include/solve.h"
+#include "./include/printBoard.h"
 using namespace std;
 
 int main()
@@ -8,19 +9,11 @@ int main()
 	vector<vector<int>> board(9, vector<int>(9, 0));
 	while (true)
 	{
-		for (int i = 0; i < 9; i++)
-		{
-			for (int j = 0; j < 9; j++)
-			{
-				cout << board[i][j] << " ";
-			}
-			cout << "\n";
-		}
+		printBoard(board);
 		cout << "\n"
 			 << "Enter a command : ";
 		string s;
 		getline(cin, s);
-
 		if (s.substr(0, 3) == "set")
 		{
 			int row = s[4] - 'a', col = s[5] - '1';
