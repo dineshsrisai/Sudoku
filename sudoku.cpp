@@ -2,13 +2,15 @@
 #include "./include/isValid.h"
 #include "./include/solve.h"
 #include "./include/printBoard.h"
-#include "./include/save.h"
+#include "./include/saveAndLoad.h"
 using namespace std;
-
 
 int main()
 {
 	vector<vector<int>> board(9, vector<int>(9, 0));
+
+	load("autosave.txt", board);
+
 	while (true)
 	{
 		// preprocessor directives eg : headerfiles
@@ -42,13 +44,10 @@ int main()
 
 		if (s == "exit")
 		{
+			save("autosave.txt", board);
 			break;
 		}
 		cout << s << "\n";
 	}
 	return 0;
 }
-
-// cmake --build build
-// cmake -B build
-// .\build\sudoko.exe
