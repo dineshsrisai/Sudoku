@@ -3,6 +3,7 @@
 #include "./include/solve.h"
 #include "./include/printBoard.h"
 #include "./include/saveAndLoad.h"
+#include "./include/randomBoards.h"
 using namespace std;
 
 int numSaves = 0;
@@ -235,6 +236,18 @@ int main()
 			{
 				cout << "Invalid\n";
 			}
+		}
+
+		if (s == "rand")
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 9; j++)
+				{
+					board[i][j] = 0;
+				}
+			}
+			randomBoards(board);
 		}
 
 		if (s == "exit")
