@@ -130,6 +130,25 @@ int main()
 				}
 				if (!exists)
 				{
+					string *temp = new string[numSaves];
+					for (int i = 0; i < numSaves; i++)
+					{
+						temp[i] = savedGames[i];
+					}
+					if (savedGames)
+					{
+						delete[] savedGames;
+					}
+					savedGames = new string[numSaves + 1];
+					for (int i = 0; i < numSaves; i++)
+					{
+						savedGames[i] = temp[i];
+					}
+					if (temp)
+					{
+						delete[] temp;
+						temp = nullptr;
+					}
 					savedGames[numSaves] = fileName;
 					numSaves++;
 				}
