@@ -5,16 +5,48 @@
 #include "./include/saveAndLoad.h"
 using namespace std;
 
+int numSaves = 0;
+string *savedGames = nullptr;
+bool run = true;
+
+vector<vector<int>> board(9, vector<int>(9, 0));
+
+void signalHandler(int signal)
+{
+	save("autosave.txt", board);
+	run = false;
+	ofstream fout("dir.txt");
+	fout << numSaves << "\n";
+	for (int i = 0; i < numSaves; i++)
+	{
+		fout << savedGames[i] << "\n";
+	}
+	fout.close();
+	if (savedGames)
+	{
+		delete[] savedGames;
+		savedGames = nullptr;
+	}
+}
+
 int main()
 {
 
-	int numSaves = 0;
-	string savedGames[1000];
+	signal(SIGINT, signalHandler);
+	signal(SIGTERM, signalHandler);
+#ifdef _WIN32
+	signal(SIGBREAK, signalHandler);
+#endif
+
+	stringstream console;
 
 	ifstream fin("dir.txt");
 	if (!fin.fail())
 	{
 		fin >> numSaves;
+
+		savedGames = new string[numSaves];
+
 		for (int i = 0; i < numSaves; i++)
 		{
 			fin >> savedGames[i];
@@ -23,10 +55,7 @@ int main()
 	fin.close();
 	sort(savedGames, savedGames + numSaves);
 
-	vector<vector<int>> board(9, vector<int>(9, 0));
-
 	load("autosave.txt", board);
-	bool run = true;
 	while (run)
 	{
 		// preprocessor directives eg : headerfiles
@@ -37,6 +66,11 @@ int main()
 #endif
 
 		printBoard(board);
+
+		cout << "\n"
+			 << console.str() << "\n";
+		console.str("");
+
 		cout << "\n"
 			 << "Enter a command : ";
 		string s;
@@ -54,7 +88,7 @@ int main()
 			}
 			else
 			{
-				cout << "Invalid\n";
+				console << "Invalid\n";
 			}
 		}
 
@@ -106,14 +140,38 @@ int main()
 			}
 		}
 
-		if (s == "listSaves")
+		if (s == "list saves")
 		{
-			cout << "Saved Games : " << "\n";
+			console << "Saved Games : " << "\n";
 			for (int i = 0; i < numSaves; i++)
 			{
-				cout << savedGames[i] << "\n";
+				console << savedGames[i] << "\n";
 			}
 			system("pause");
+		}
+
+		if (s.substr(0, 6) == "delete")
+		{
+			if (s.size() > 6)
+			{
+				string fileName = s.substr(6);
+				while (fileName.size() > 0 && fileName[0] == ' ')
+				{
+					fileName.erase(0, 1);
+				}
+				for (int i = 0; i < numSaves; i++)
+				{
+					if (savedGames[i] == fileName)
+					{
+						for (int j = i + 1; j < numSaves; j++)
+						{
+							savedGames[j - 1] = savedGames[j];
+							numSaves--;
+						}
+					}
+				}
+				remove(fileName.c_str());
+			}
 		}
 
 		if (s == "exit")
@@ -128,7 +186,13 @@ int main()
 			}
 			fout.close();
 		}
-		cout << s << "\n";
 	}
+
+	if (savedGames)
+	{
+		delete[] savedGames;
+		savedGames = nullptr;
+	}
+
 	return 0;
 }
