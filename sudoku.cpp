@@ -218,8 +218,23 @@ int main()
 
 		if (s == "solve")
 		{
-			reset(board);
 			solve(board);
+		}
+
+		if (s.substr(0, 4) == "hint")
+		{
+			int x = s[5] - 'a', y = s[6] - '1';
+
+			if (x >= 0 && x < 9 && y >= 0 && y < 9)
+			{
+				vector<vector<int>> temp = board;
+				solve(temp);
+				console << "Hint : " << char(x + 'a') << char(y + '1') << " " << temp[x][y] << "\n";
+			}
+			else
+			{
+				cout << "Invalid\n";
+			}
 		}
 
 		if (s == "exit")
