@@ -9,7 +9,23 @@ int numSaves = 0;
 string *savedGames = nullptr;
 bool run = true;
 
-vector<vector<int>> board(9, vector<int>(9, 0));
+vector<vector<int>> board = {
+	{5, 3, 0, 0, 7, 0, 0, 0, 0},
+	{6, 0, 0, 1, 9, 5, 0, 0, 0},
+	{0, 9, 8, 0, 0, 0, 0, 6, 0},
+	{8, 0, 0, 0, 6, 0, 0, 0, 3},
+	{4, 0, 0, 8, 0, 3, 0, 0, 1},
+	{7, 0, 0, 0, 2, 0, 0, 0, 6},
+	{0, 6, 0, 0, 0, 0, 2, 8, 0},
+	{0, 0, 0, 4, 1, 9, 0, 0, 5},
+	{0, 0, 0, 0, 8, 0, 0, 7, 9}};
+
+vector<vector<int>> originalBoard = board;
+
+void reset(vector<vector<int>> &b)
+{
+	b = originalBoard;
+}
 
 void signalHandler(int signal)
 {
@@ -53,9 +69,16 @@ int main()
 		}
 	}
 	fin.close();
-	sort(savedGames, savedGames + numSaves);
+	if (numSaves > 0)
+	{
+		sort(savedGames, savedGames + numSaves);
+	}
 
-	load("autosave.txt", board);
+	if (!load("autosave.txt", board))
+	{
+		console << "No autosave found\n";
+	}
+
 	while (run)
 	{
 		// preprocessor directives eg : headerfiles
@@ -96,7 +119,7 @@ int main()
 		{
 			if (s.size() > 4)
 			{
-				string fileName = s.substr(0, 4);
+				string fileName = s.substr(4);
 				while (fileName.size() > 4 && fileName[0] == ' ')
 				{
 					fileName.erase(0, 1);
@@ -113,7 +136,7 @@ int main()
 		{
 			if (s.size() > 4)
 			{
-				string fileName = s.substr(0, 4);
+				string fileName = s.substr(4);
 				while (fileName.size() > 4 && fileName[0] == ' ')
 				{
 					fileName.erase(0, 1);
@@ -191,6 +214,12 @@ int main()
 				}
 				remove(fileName.c_str());
 			}
+		}
+
+		if (s == "solve")
+		{
+			reset(board);
+			solve(board);
 		}
 
 		if (s == "exit")
