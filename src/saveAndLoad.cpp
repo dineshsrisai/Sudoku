@@ -1,4 +1,4 @@
-#include "../include/saveAndLoad.h";
+#include "../include/saveAndLoad.h"
 
 bool save(string fileName, const vector<vector<int>> &b)
 {
@@ -27,8 +27,8 @@ bool save(string fileName, const vector<vector<int>> &b)
 bool load(string fileName, vector<vector<int>> &b)
 {
     ifstream fin;
-
     fin.open(fileName);
+
     if (fin.fail())
     {
         fin.close();
@@ -40,8 +40,15 @@ bool load(string fileName, vector<vector<int>> &b)
         for (int j = 0; j < 9; j++)
         {
             fin >> b[i][j];
+
+            if (fin.fail())
+            {
+                fin.close();
+                return false;
+            }
         }
     }
+
     fin.close();
     return true;
 }

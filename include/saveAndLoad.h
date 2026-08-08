@@ -1,5 +1,5 @@
-#ifndef SAVE_H, LOAD_H
-#define SAVE_H , LOAD_H
+#ifndef SAVE_LOAD_H
+#define SAVE_LOAD_H
 
 #include <bits/stdc++.h>
 using namespace std;

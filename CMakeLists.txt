@@ -10,4 +10,4 @@ file(GLOB SRC
     "src/*.cpp"
 )
 
-add_executable(sudoko sudoku.cpp ${SRC})
+add_executable(sudoku sudoku.cpp ${SRC})
