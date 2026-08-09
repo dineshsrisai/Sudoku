@@ -48,6 +48,7 @@ void signalHandler(int signal)
 
 int main()
 {
+	srand(static_cast<unsigned int>(time(nullptr)));
 
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);

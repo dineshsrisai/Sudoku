@@ -10,7 +10,12 @@ bool randomBoards(vector<vector<int>> &b)
             if (b[i][j] == 0)
             {
                 int values[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-                shuffle(values, values + 9, mt19937(random_device{}()));
+
+                for (int k = 8; k > 0; k--)
+                {
+                    int r = rand() % (k + 1);
+                    swap(values[k], values[r]);
+                }
 
                 for (int idx = 0; idx < 9; idx++)
                 {
