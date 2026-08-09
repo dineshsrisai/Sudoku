@@ -4,6 +4,8 @@
 #include "./include/printBoard.h"
 #include "./include/saveAndLoad.h"
 #include "./include/randomBoards.h"
+#include "./include/multiSol.h"
+
 using namespace std;
 
 int numSaves = 0;
@@ -48,7 +50,7 @@ void signalHandler(int signal)
 
 int main()
 {
-	srand(static_cast<unsigned int>(time(nullptr)));
+	srand(time(nullptr));
 
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
@@ -239,7 +241,7 @@ int main()
 			}
 		}
 
-		if (s == "rand")
+		if (s.substr(0, 3) == "new")
 		{
 			for (int i = 0; i < 9; i++)
 			{
@@ -249,6 +251,15 @@ int main()
 				}
 			}
 			randomBoards(board);
+			generate(board, 30);
+
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 9; j++)
+				{
+					board[i][j] = board[i][j];
+				}
+			}
 		}
 
 		if (s == "exit")
