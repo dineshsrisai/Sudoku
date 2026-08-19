@@ -5,11 +5,8 @@
 #include "./include/saveAndLoad.h"
 #include "./include/randomBoards.h"
 #include "./include/multiSol.h"
-
 using namespace std;
 
-int numSaves = 0;
-string *savedGames = nullptr;
 bool run = true;
 
 vector<vector<int>> board = {
@@ -30,28 +27,24 @@ void reset(vector<vector<int>> &b)
 	b = originalBoard;
 }
 
+string trimLeadingSpaces(string s)
+{
+	while (!s.empty() && s[0] == ' ')
+	{
+		s.erase(0, 1);
+	}
+	return s;
+}
+
 void signalHandler(int signal)
 {
 	save("autosave.txt", board);
-	run = false;
-	ofstream fout("dir.txt");
-	fout << numSaves << "\n";
-	for (int i = 0; i < numSaves; i++)
-	{
-		fout << savedGames[i] << "\n";
-	}
-	fout.close();
-	if (savedGames)
-	{
-		delete[] savedGames;
-		savedGames = nullptr;
-	}
+	exit(0);
 }
 
 int main()
 {
-	srand(time(nullptr));
-
+	srand((unsigned int)time(nullptr));
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
 #ifdef _WIN32
@@ -60,188 +53,112 @@ int main()
 
 	stringstream console;
 
-	ifstream fin("dir.txt");
-	if (!fin.fail())
-	{
-		fin >> numSaves;
-
-		savedGames = new string[numSaves];
-
-		for (int i = 0; i < numSaves; i++)
-		{
-			fin >> savedGames[i];
-		}
-	}
-	fin.close();
-	if (numSaves > 0)
-	{
-		sort(savedGames, savedGames + numSaves);
-	}
-
 	if (!load("autosave.txt", board))
 	{
 		console << "No autosave found\n";
 	}
+	originalBoard = board;
 
 	while (run)
 	{
-		// preprocessor directives eg : headerfiles
-#ifdef _WIN32
-		system("cls");
-#else
-		system("clear");
-#endif
-
 		printBoard(board);
-
-		cout << "\n"
-			 << console.str() << "\n";
+		cout << "\n";
+		cout << console.str() << "\n";
 		console.str("");
-
-		cout << "\n"
-			 << "Enter a command : ";
+		cout << "\nEnter a command : ";
 		string s;
 		getline(cin, s);
+		if (s == "menu")
+		{
+			console << "Commands:\n";
+			console << "  set <row><col> <val>  - e.g. set a1 5\n";
+			console << "  hint <row><col>       - e.g. hint a1\n";
+			console << "  solve                 - auto-solve the board\n";
+			console << "  new                   - generate a new puzzle\n";
+			console << "  clear                 - reset to original puzzle\n";
+			console << "  save <name>           - save current board\n";
+			console << "  load <name>           - load a saved board\n";
+			console << "  exit                  - save and quit\n";
+		}
 		if (s.substr(0, 3) == "set")
 		{
-			int row = s[4] - 'a', col = s[5] - '1';
-			int val = s[7] - '0';
-			if (row >= 0 && row < 9 && col >= 0 && col < 9)
-			{
-				if (isValid(board, row, col, val))
-				{
-					board[row][col] = val;
-				}
-			}
-			else
+			if (s.size() < 8)
 			{
 				console << "Invalid\n";
 			}
+			else
+			{
+				int row = s[4] - 'a', col = s[5] - '1', val = s[7] - '0';
+				if (row >= 0 && row < 9 && col >= 0 && col < 9 && val >= 1 && val <= 9 && isValid(board, row, col, val))
+				{
+					board[row][col] = val;
+				}
+				else
+				{
+					console << "Invalid\n";
+				}
+			}
 		}
 
-		if (s.substr(0, 4) == "load")
+		else if (s.substr(0, 4) == "load")
 		{
-			if (s.size() > 4)
+			string fileName = s.size() > 4 ? trimLeadingSpaces(s.substr(4)) : "default.txt";
+			if (!load(fileName, board))
 			{
-				string fileName = s.substr(4);
-				while (fileName.size() > 4 && fileName[0] == ' ')
-				{
-					fileName.erase(0, 1);
-				}
-				load(fileName, board);
+				console << "Could not load " << fileName << "\n";
 			}
 			else
 			{
-				load("default.txt", board);
+				originalBoard = board;
 			}
 		}
 
-		if (s.substr(0, 4) == "save")
+		else if (s.substr(0, 4) == "save")
 		{
-			if (s.size() > 4)
+			string fileName = s.size() > 4 ? trimLeadingSpaces(s.substr(4)) : "default.txt";
+			if (save(fileName, board))
 			{
-				string fileName = s.substr(4);
-				while (fileName.size() > 4 && fileName[0] == ' ')
-				{
-					fileName.erase(0, 1);
-				}
-				save(fileName, board);
-
-				bool exists = false;
-				for (int i = 0; i < numSaves; i++)
-				{
-					if (savedGames[i] == fileName)
-					{
-						exists = true;
-					}
-				}
-				if (!exists)
-				{
-					string *temp = new string[numSaves];
-					for (int i = 0; i < numSaves; i++)
-					{
-						temp[i] = savedGames[i];
-					}
-					if (savedGames)
-					{
-						delete[] savedGames;
-					}
-					savedGames = new string[numSaves + 1];
-					for (int i = 0; i < numSaves; i++)
-					{
-						savedGames[i] = temp[i];
-					}
-					if (temp)
-					{
-						delete[] temp;
-						temp = nullptr;
-					}
-					savedGames[numSaves] = fileName;
-					numSaves++;
-				}
+				console << "Saved to " << fileName << "\n";
 			}
 			else
 			{
-				save("default.txt", board);
+				console << "Could not save to " << fileName << "\n";
 			}
 		}
 
-		if (s == "list saves")
-		{
-			console << "Saved Games : " << "\n";
-			for (int i = 0; i < numSaves; i++)
-			{
-				console << savedGames[i] << "\n";
-			}
-			system("pause");
-		}
-
-		if (s.substr(0, 6) == "delete")
-		{
-			if (s.size() > 6)
-			{
-				string fileName = s.substr(6);
-				while (fileName.size() > 0 && fileName[0] == ' ')
-				{
-					fileName.erase(0, 1);
-				}
-				for (int i = 0; i < numSaves; i++)
-				{
-					if (savedGames[i] == fileName)
-					{
-						for (int j = i + 1; j < numSaves; j++)
-						{
-							savedGames[j - 1] = savedGames[j];
-							numSaves--;
-						}
-					}
-				}
-				remove(fileName.c_str());
-			}
-		}
-
-		if (s == "solve")
+		else if (s == "solve")
 		{
 			solve(board);
 		}
 
-		if (s.substr(0, 4) == "hint")
+		else if (s.substr(0, 4) == "hint")
 		{
-			int x = s[5] - 'a', y = s[6] - '1';
-
-			if (x >= 0 && x < 9 && y >= 0 && y < 9)
+			if (s.size() < 7)
 			{
-				vector<vector<int>> temp = board;
-				solve(temp);
-				console << "Hint : " << char(x + 'a') << char(y + '1') << " " << temp[x][y] << "\n";
+				console << "Invalid\n";
 			}
 			else
 			{
-				cout << "Invalid\n";
+				int x = s[5] - 'a', y = s[6] - '1';
+				if (x >= 0 && x < 9 && y >= 0 && y < 9)
+				{
+					vector<vector<int>> temp = board;
+					solve(temp);
+					console << "Hint : " << char(x + 'a') << char(y + '1') << " " << temp[x][y] << "\n";
+				}
+				else
+				{
+					console << "Invalid\n";
+				}
 			}
 		}
 
-		if (s.substr(0, 3) == "new")
+		else if (s == "clear")
+		{
+			reset(board);
+		}
+
+		else if (s.substr(0, 3) == "new")
 		{
 			for (int i = 0; i < 9; i++)
 			{
@@ -252,34 +169,19 @@ int main()
 			}
 			randomBoards(board);
 			generate(board, 30);
-
-			for (int i = 0; i < 9; i++)
-			{
-				for (int j = 0; j < 9; j++)
-				{
-					board[i][j] = board[i][j];
-				}
-			}
+			originalBoard = board;
 		}
 
-		if (s == "exit")
+		else if (s == "exit")
 		{
 			save("autosave.txt", board);
 			run = false;
-			ofstream fout("dir.txt");
-			fout << numSaves << "\n";
-			for (int i = 0; i < numSaves; i++)
-			{
-				fout << savedGames[i] << "\n";
-			}
-			fout.close();
 		}
-	}
 
-	if (savedGames)
-	{
-		delete[] savedGames;
-		savedGames = nullptr;
+		else if (!s.empty())
+		{
+			console << "Unknown command\n";
+		}
 	}
 
 	return 0;

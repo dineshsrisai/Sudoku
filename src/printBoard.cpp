@@ -1,6 +1,7 @@
 #include "../include/printBoard.h"
 void printBoard(const vector<vector<int>> &b)
 {
+    cout << "Use Cmd 'menu' \n";
     cout << "\n";
     cout << "   1 2 3   4 5 6   7 8 9 " << "\n";
     for (int i = 0; i < 9; i++)

@@ -4,8 +4,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool multiSol(vector<vector<int>> &board, int &numSol);
+bool multiSol(vector<vector<int>> &b, int &numSol);
 
-bool generate(vector<vector<int>> &board, int numEntries);
+bool generate(vector<vector<int>> &b, int numEntries);
 
 #endif
