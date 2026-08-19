@@ -80,7 +80,7 @@ int main()
 			console << "  load <name>           - load a saved board\n";
 			console << "  exit                  - save and quit\n";
 		}
-		if (s.substr(0, 3) == "set")
+		else if (s.substr(0, 3) == "set")
 		{
 			if (s.size() < 8)
 			{
