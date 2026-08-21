@@ -143,7 +143,7 @@ int main()
 				if (x >= 0 && x < 9 && y >= 0 && y < 9)
 				{
 					vector<vector<int>> temp = board;
-					solve(temp);
+					bool solved = solve(temp);
 					console << "Hint : " << char(x + 'a') << char(y + '1') << " " << temp[x][y] << "\n";
 				}
 				else
